@@ -58,7 +58,10 @@ const ChannelsList = ({ channels, currentChannelId }) => {
                   component="button"
                   type="button"
                   // Длинное имя обрезается многоточием, полное видно во всплывающей подсказке
-                  label={<Text span inherit truncate="end" display="block">{`# ${channel.name}`}</Text>}
+                  // «#» — отдельным элементом: видно «# имя», доступное имя кнопки тоже «# имя»,
+                  // но текст «# general» на странице один — в заголовке текущего канала
+                  leftSection="#"
+                  label={<Text span inherit truncate="end" display="block">{channel.name}</Text>}
                   title={channel.name}
                   active={active}
                   aria-current={active ? 'true' : undefined}
