@@ -18,6 +18,7 @@ import { useChannels, useMessages } from '../queries.js'
 import ChannelsList from '../components/ChannelsList.jsx'
 import Messages from '../components/Messages.jsx'
 import MessageForm from '../components/MessageForm.jsx'
+import ChannelModals from '../components/modals/ChannelModals.jsx'
 
 const pluralizeMessages = (count) => {
   const mod10 = count % 10
@@ -67,7 +68,7 @@ const Chat = () => {
         <Divider orientation="vertical" />
         <Flex direction="column" flex={1} miw={0}>
           <Box p="md" bg="gray.0">
-            <Text fw={700}>{`# ${currentChannel?.name ?? ''}`}</Text>
+            <Text fw={700} truncate="end" title={currentChannel?.name}>{`# ${currentChannel?.name ?? ''}`}</Text>
             <Text size="sm" c="dimmed">{pluralizeMessages(channelMessages.length)}</Text>
           </Box>
           <Divider />
@@ -96,6 +97,7 @@ const ChatPage = () => {
         </Alert>
       )}
       <Chat />
+      <ChannelModals />
     </Flex>
   )
 }

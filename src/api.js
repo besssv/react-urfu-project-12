@@ -8,6 +8,7 @@ export class HttpError extends Error {
 const apiPaths = {
   login: () => '/api/v1/login',
   channels: () => '/api/v1/channels',
+  channel: id => `/api/v1/channels/${id}`,
   messages: () => '/api/v1/messages',
 }
 
@@ -32,4 +33,10 @@ export const fetchChannels = token => request('GET', apiPaths.channels(), { toke
 
 export const fetchMessages = token => request('GET', apiPaths.messages(), { token })
 
-export const postMessage = (token, message) => request('POST', apiPaths.messages(), { token, body: message })
+export const createChannel = (token, name) => request('POST', apiPaths.channels(), { token, body: { name } })
+
+export const renameChannel = (token, id, name) => request('PATCH', apiPaths.channel(id), { token, body: { name } })
+
+export const removeChannel = (token, id) => request('DELETE', apiPaths.channel(id), { token })
+
+export const postMessage =(token, message) => request('POST', apiPaths.messages(), { token, body: message })

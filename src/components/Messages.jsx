@@ -14,7 +14,8 @@ const Messages = ({ messages }) => {
     <ScrollArea flex={1} viewportRef={viewportRef} px="md">
       <Stack gap="xs" py="sm">
         {messages.map(message => (
-          <Box key={message.id}>
+          // Длинные слова и ссылки переносятся, а не растягивают ленту вширь
+          <Box key={message.id} style={{ overflowWrap: 'anywhere' }}>
             <Text span fw={700}>{message.username}</Text>
             {': '}
             <Text span>{message.body}</Text>
