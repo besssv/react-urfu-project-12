@@ -13,6 +13,7 @@ import {
 } from '@mantine/core'
 import useAuthStore from '../store/authStore.js'
 import useUiStore from '../store/uiStore.js'
+import useConnectionStore from '../store/connectionStore.js'
 import { useChannels, useMessages } from '../queries.js'
 import ChannelsList from '../components/ChannelsList.jsx'
 import Messages from '../components/Messages.jsx'
@@ -72,7 +73,7 @@ const Chat = () => {
           <Divider />
           <Messages messages={channelMessages} />
           <Divider />
-          <MessageForm />
+          <MessageForm channelId={currentChannel?.id} />
         </Flex>
       </Flex>
     </Paper>
@@ -81,6 +82,7 @@ const Chat = () => {
 
 const ChatPage = () => {
   const logOut = useAuthStore(state => state.logOut)
+  const connected = useConnectionStore(state => state.connected)
 
   return (
     <Flex direction="column" h="100dvh" p="md" gap="md">
@@ -88,6 +90,11 @@ const ChatPage = () => {
         <Title order={2}>Hexlet Chat</Title>
         <Button variant="default" onClick={logOut}>Выйти</Button>
       </Group>
+      {!connected && (
+        <Alert color="yellow" variant="light" role="status">
+          Нет соединения с сервером. Пытаемся переподключиться — новые сообщения появятся, как только связь восстановится.
+        </Alert>
+      )}
       <Chat />
     </Flex>
   )

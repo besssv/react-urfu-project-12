@@ -4,6 +4,7 @@ import { QueryCache, QueryClient, QueryClientProvider } from '@tanstack/react-qu
 import '@mantine/core/styles.css'
 import App from './App.jsx'
 import useAuthStore from './store/authStore.js'
+import subscribeToSocket from './socket.js'
 
 const init = async (socket) => {
   const queryClient = new QueryClient({
@@ -21,6 +22,8 @@ const init = async (socket) => {
       },
     },
   })
+
+  subscribeToSocket(socket, queryClient)
 
   // После выхода серверные данные прошлого пользователя не должны оставаться в кеше
   useAuthStore.subscribe((state, prevState) => {

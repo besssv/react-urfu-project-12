@@ -31,3 +31,5 @@ export const login = credentials => request('POST', apiPaths.login(), { body: cr
 export const fetchChannels = token => request('GET', apiPaths.channels(), { token })
 
 export const fetchMessages = token => request('GET', apiPaths.messages(), { token })
+
+export const postMessage = (token, message) => request('POST', apiPaths.messages(), { token, body: message })
