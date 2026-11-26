@@ -9,6 +9,7 @@ import {
 } from './api.js'
 import useAuthStore from './store/authStore.js'
 import useUiStore from './store/uiStore.js'
+import censor from './profanity.js'
 
 export const queryKeys = {
   channels: ['channels'],
@@ -66,7 +67,8 @@ export const useSendMessage = () => {
   const queryClient = useQueryClient()
   return useMutation({
     ...mutationDefaults,
-    mutationFn: ({ body, channelId }) => postMessage(token, { body, channelId, username }),
+    // Нецензурные слова вычищаются до отправки — на сервер и другим пользователям уходит уже чистый текст
+    mutationFn: ({ body, channelId }) => postMessage(token, { body: censor(body), channelId, username }),
     onSuccess: message => addMessageToCache(queryClient, message),
   })
 }
@@ -76,7 +78,7 @@ export const useAddChannel = () => {
   const queryClient = useQueryClient()
   return useMutation({
     ...mutationDefaults,
-    mutationFn: name => createChannel(token, name),
+    mutationFn: name => createChannel(token, censor(name)),
     onSuccess: (channel) => {
       addChannelToCache(queryClient, channel)
       // Создатель канала сразу попадает в него
@@ -90,7 +92,7 @@ export const useRenameChannel = () => {
   const queryClient = useQueryClient()
   return useMutation({
     ...mutationDefaults,
-    mutationFn: ({ id, name }) => renameChannel(token, id, name),
+    mutationFn: ({ id, name }) => renameChannel(token, id, censor(name)),
     onSuccess: channel => renameChannelInCache(queryClient, channel),
   })
 }

@@ -1,6 +1,7 @@
 import { Button, Group, TextInput } from '@mantine/core'
 import { hasLength, isNotEmpty, useForm } from '@mantine/form'
 import { useTranslation } from 'react-i18next'
+import censor from '../../profanity.js'
 
 // Форма имени канала — общая для создания и переименования
 const ChannelNameForm = ({
@@ -23,7 +24,8 @@ const ChannelNameForm = ({
         const name = value.trim()
         return required(name)
           ?? length(name)
-          ?? (takenNames.includes(name) ? t('validation.mustBeUnique') : null)
+          // Сравниваем с тем именем, которое реально сохранится — после фильтрации
+          ?? (takenNames.includes(censor(name)) ? t('validation.mustBeUnique') : null)
       },
     },
     transformValues: ({ name }) => ({ name: name.trim() }),
