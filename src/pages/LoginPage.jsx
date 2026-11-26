@@ -1,16 +1,23 @@
 import { useState } from 'react'
 import {
   Alert,
+  Anchor,
   Button,
   Container,
   Paper,
   PasswordInput,
   Stack,
+  Text,
   TextInput,
   Title,
 } from '@mantine/core'
 import { useForm } from '@mantine/form'
-import { Navigate, useLocation, useNavigate } from 'react-router'
+import {
+  Link,
+  Navigate,
+  useLocation,
+  useNavigate,
+} from 'react-router'
 import { login } from '../api.js'
 import useAuthStore from '../store/authStore.js'
 import routes from '../routes.js'
@@ -57,7 +64,7 @@ const LoginPage = () => {
   }
 
   return (
-    <Container size={420} py="xl">
+    <Container size={420} py="xl" w="100%">
       <Paper withBorder shadow="sm" p="xl" radius="md">
         <form onSubmit={form.onSubmit(handleSubmit)}>
           <Stack>
@@ -71,6 +78,7 @@ const LoginPage = () => {
               label="Ваш ник"
               autoComplete="username"
               required
+              autoFocus
               key={form.key('username')}
               {...form.getInputProps('username')}
             />
@@ -82,6 +90,11 @@ const LoginPage = () => {
               {...form.getInputProps('password')}
             />
             <Button type="submit" fullWidth loading={submitting}>Войти</Button>
+            <Text size="sm" ta="center">
+              Нет аккаунта?
+              {' '}
+              <Anchor component={Link} to={routes.signup()}>Регистрация</Anchor>
+            </Text>
           </Stack>
         </form>
       </Paper>

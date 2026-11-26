@@ -5,13 +5,10 @@ import {
   Center,
   Divider,
   Flex,
-  Group,
   Loader,
   Paper,
   Text,
-  Title,
 } from '@mantine/core'
-import useAuthStore from '../store/authStore.js'
 import useUiStore from '../store/uiStore.js'
 import useConnectionStore from '../store/connectionStore.js'
 import { useChannels, useMessages } from '../queries.js'
@@ -82,15 +79,10 @@ const Chat = () => {
 }
 
 const ChatPage = () => {
-  const logOut = useAuthStore(state => state.logOut)
   const connected = useConnectionStore(state => state.connected)
 
   return (
-    <Flex direction="column" h="100dvh" p="md" gap="md">
-      <Group justify="space-between">
-        <Title order={2}>Hexlet Chat</Title>
-        <Button variant="default" onClick={logOut}>Выйти</Button>
-      </Group>
+    <Flex direction="column" flex={1} mih={0} p="md" gap="md">
       {!connected && (
         <Alert color="yellow" variant="light" role="status">
           Нет соединения с сервером. Пытаемся переподключиться — новые сообщения появятся, как только связь восстановится.
