@@ -94,7 +94,6 @@ const SignupPage = () => {
             <TextInput
               label={t('signup.username')}
               autoComplete="username"
-              withAsterisk
               autoFocus
               readOnly={signupMutation.isPending}
               key={form.key('username')}
@@ -103,7 +102,6 @@ const SignupPage = () => {
             <PasswordInput
               label={t('signup.password')}
               autoComplete="new-password"
-              withAsterisk
               readOnly={signupMutation.isPending}
               key={form.key('password')}
               {...form.getInputProps('password')}
@@ -111,7 +109,6 @@ const SignupPage = () => {
             <PasswordInput
               label={t('signup.confirmPassword')}
               autoComplete="new-password"
-              withAsterisk
               readOnly={signupMutation.isPending}
               key={form.key('confirmPassword')}
               {...form.getInputProps('confirmPassword')}

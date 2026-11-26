@@ -21,6 +21,9 @@ const Chat = () => {
   const channelsQuery = useChannels()
   const messagesQuery = useMessages()
   const currentChannelId = useUiStore(state => state.currentChannelId)
+  // Пока открыта модалка, чат за ней недоступен ни с клавиатуры, ни для скринридеров:
+  // иначе, например, кнопок «Отправить» на экране оказалось бы две
+  const modalOpen = useUiStore(state => Boolean(state.modal))
   const { t } = useTranslation()
 
   if (channelsQuery.isPending || messagesQuery.isPending) {
@@ -50,7 +53,14 @@ const Chat = () => {
   const channelMessages = messagesQuery.data.filter(m => m.channelId === currentChannel?.id)
 
   return (
-    <Paper withBorder radius="md" flex={1} mih={0}>
+    <Paper
+      withBorder
+      radius="md"
+      flex={1}
+      mih={0}
+      inert={modalOpen || undefined}
+      aria-hidden={modalOpen || undefined}
+    >
       <Flex h="100%">
         <Box w={{ base: 140, sm: 220 }} py="md" bg="gray.0">
           <ChannelsList channels={channels} currentChannelId={currentChannel?.id} />

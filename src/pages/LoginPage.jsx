@@ -82,7 +82,6 @@ const LoginPage = () => {
             <TextInput
               label={t('login.username')}
               autoComplete="username"
-              required
               autoFocus
               key={form.key('username')}
               {...form.getInputProps('username')}
@@ -90,7 +89,6 @@ const LoginPage = () => {
             <PasswordInput
               label={t('login.password')}
               autoComplete="current-password"
-              required
               key={form.key('password')}
               {...form.getInputProps('password')}
             />
