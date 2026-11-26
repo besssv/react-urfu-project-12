@@ -7,6 +7,8 @@ export class HttpError extends Error {
 
 const apiPaths = {
   login: () => '/api/v1/login',
+  channels: () => '/api/v1/channels',
+  messages: () => '/api/v1/messages',
 }
 
 const request = async (method, path, { token, body } = {}) => {
@@ -25,3 +27,7 @@ const request = async (method, path, { token, body } = {}) => {
 }
 
 export const login = credentials => request('POST', apiPaths.login(), { body: credentials })
+
+export const fetchChannels = token => request('GET', apiPaths.channels(), { token })
+
+export const fetchMessages = token => request('GET', apiPaths.messages(), { token })
