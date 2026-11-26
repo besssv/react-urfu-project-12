@@ -8,6 +8,7 @@ import {
   QueryClientProvider,
 } from '@tanstack/react-query'
 import { I18nextProvider } from 'react-i18next'
+import { ErrorBoundary } from '@sentry/react'
 import '@mantine/core/styles.css'
 import '@mantine/notifications/styles.css'
 import App from './App.jsx'
@@ -15,6 +16,8 @@ import useAuthStore from './store/authStore.js'
 import subscribeToSocket from './socket.js'
 import createI18n from './i18n.js'
 import { isNetworkError, toastLoadError, toastNetworkError } from './toasts.js'
+import { reportServerError } from './sentry.js'
+import ErrorFallback from './components/ErrorFallback.jsx'
 
 // Эти ответы сервера разбираются прямо в формах (неверный пароль, занятое имя), отдельный тост не нужен
 const handledInForms = [401, 409]
@@ -33,6 +36,7 @@ const init = async (socket) => {
     queryCache: new QueryCache({
       onError: (error) => {
         logOutIfUnauthorized(error)
+        reportServerError(error)
         if (error.status !== 401) {
           toastLoadError(i18n.t(isNetworkError(error) ? 'toasts.networkError' : 'toasts.loadError'))
         }
@@ -41,6 +45,7 @@ const init = async (socket) => {
     mutationCache: new MutationCache({
       onError: (error) => {
         logOutIfUnauthorized(error)
+        reportServerError(error)
         if (!handledInForms.includes(error.status)) {
           toastNetworkError(i18n.t('toasts.networkError'))
         }
@@ -69,7 +74,10 @@ const init = async (socket) => {
           <MantineProvider>
             {/* По центру сверху: справа уведомление закрывало бы кнопку «Выйти» в хедере */}
             <Notifications position="top-center" />
-            <App socket={socket} />
+            {/* Ошибка в любом компоненте: показываем запасной экран и отправляем отчёт в Sentry */}
+            <ErrorBoundary fallback={<ErrorFallback />}>
+              <App socket={socket} />
+            </ErrorBoundary>
           </MantineProvider>
         </QueryClientProvider>
       </I18nextProvider>
