@@ -16,24 +16,18 @@ import ChannelsList from '../components/ChannelsList.jsx'
 import Messages from '../components/Messages.jsx'
 import MessageForm from '../components/MessageForm.jsx'
 import ChannelModals from '../components/modals/ChannelModals.jsx'
-
-const pluralizeMessages = (count) => {
-  const mod10 = count % 10
-  const mod100 = count % 100
-  if (mod10 === 1 && mod100 !== 11) return `${count} сообщение`
-  if (mod10 >= 2 && mod10 <= 4 && (mod100 < 12 || mod100 > 14)) return `${count} сообщения`
-  return `${count} сообщений`
-}
+import { useTranslation } from 'react-i18next'
 
 const Chat = () => {
   const channelsQuery = useChannels()
   const messagesQuery = useMessages()
   const currentChannelId = useUiStore(state => state.currentChannelId)
+  const { t } = useTranslation()
 
   if (channelsQuery.isPending || messagesQuery.isPending) {
     return (
       <Center flex={1}>
-        <Loader aria-label="Загрузка" />
+        <Loader aria-label={t('chat.loading')} />
       </Center>
     )
   }
@@ -45,8 +39,8 @@ const Chat = () => {
     }
     return (
       <Center flex={1}>
-        <Alert color="red" title="Не удалось загрузить чат">
-          <Button variant="light" color="red" mt="sm" onClick={retry}>Повторить</Button>
+        <Alert color="red" title={t('chat.loadError')}>
+          <Button variant="light" color="red" mt="sm" onClick={retry}>{t('chat.retry')}</Button>
         </Alert>
       </Center>
     )
@@ -66,7 +60,7 @@ const Chat = () => {
         <Flex direction="column" flex={1} miw={0}>
           <Box p="md" bg="gray.0">
             <Text fw={700} truncate="end" title={currentChannel?.name}>{`# ${currentChannel?.name ?? ''}`}</Text>
-            <Text size="sm" c="dimmed">{pluralizeMessages(channelMessages.length)}</Text>
+            <Text size="sm" c="dimmed">{t('chat.messagesCount', { count: channelMessages.length })}</Text>
           </Box>
           <Divider />
           <Messages messages={channelMessages} />
@@ -80,12 +74,13 @@ const Chat = () => {
 
 const ChatPage = () => {
   const connected = useConnectionStore(state => state.connected)
+  const { t } = useTranslation()
 
   return (
     <Flex direction="column" flex={1} mih={0} p="md" gap="md">
       {!connected && (
         <Alert color="yellow" variant="light" role="status">
-          Нет соединения с сервером. Пытаемся переподключиться — новые сообщения появятся, как только связь восстановится.
+          {t('chat.disconnected')}
         </Alert>
       )}
       <Chat />

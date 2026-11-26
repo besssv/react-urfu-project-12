@@ -1,17 +1,17 @@
 import { useAddChannel, useChannels } from '../../queries.js'
 import ChannelNameForm from './ChannelNameForm.jsx'
-
-const NETWORK_ERROR = 'Не удалось создать канал. Проверьте соединение и попробуйте ещё раз'
+import { useTranslation } from 'react-i18next'
 
 const AddChannelModal = ({ onClose }) => {
   const { data: channels = [] } = useChannels()
   const addChannel = useAddChannel()
+  const { t } = useTranslation()
 
   return (
     <ChannelNameForm
       takenNames={channels.map(c => c.name)}
       pending={addChannel.isPending}
-      submitError={addChannel.isError ? NETWORK_ERROR : null}
+      submitError={addChannel.isError ? t('modals.add.error') : null}
       onCancel={onClose}
       onSubmit={name => addChannel.mutate(name, { onSuccess: onClose })}
     />

@@ -21,11 +21,13 @@ import {
 import { login } from '../api.js'
 import useAuthStore from '../store/authStore.js'
 import routes from '../routes.js'
+import { useTranslation } from 'react-i18next'
 
 const LoginPage = () => {
   const token = useAuthStore(state => state.token)
   const logIn = useAuthStore(state => state.logIn)
   const navigate = useNavigate()
+  const { t } = useTranslation()
   const location = useLocation()
   const [submitting, setSubmitting] = useState(false)
   const [networkError, setNetworkError] = useState(false)
@@ -54,7 +56,7 @@ const LoginPage = () => {
     }
     catch (error) {
       if (error.status === 401) {
-        form.setErrors({ username: true, password: 'Неверные имя пользователя или пароль' })
+        form.setErrors({ username: true, password: t('login.errors.invalidCredentials') })
       }
       else {
         setNetworkError(true)
@@ -68,14 +70,14 @@ const LoginPage = () => {
       <Paper withBorder shadow="sm" p="xl" radius="md">
         <form onSubmit={form.onSubmit(handleSubmit)}>
           <Stack>
-            <Title order={1} ta="center">Войти</Title>
+            <Title order={1} ta="center">{t('login.title')}</Title>
             {networkError && (
               <Alert color="red" variant="light">
-                Ошибка соединения. Попробуйте ещё раз.
+                {t('login.errors.network')}
               </Alert>
             )}
             <TextInput
-              label="Ваш ник"
+              label={t('login.username')}
               autoComplete="username"
               required
               autoFocus
@@ -83,17 +85,17 @@ const LoginPage = () => {
               {...form.getInputProps('username')}
             />
             <PasswordInput
-              label="Пароль"
+              label={t('login.password')}
               autoComplete="current-password"
               required
               key={form.key('password')}
               {...form.getInputProps('password')}
             />
-            <Button type="submit" fullWidth loading={submitting}>Войти</Button>
+            <Button type="submit" fullWidth loading={submitting}>{t('login.submit')}</Button>
             <Text size="sm" ta="center">
-              Нет аккаунта?
+              {t('login.noAccount')}
               {' '}
-              <Anchor component={Link} to={routes.signup()}>Регистрация</Anchor>
+              <Anchor component={Link} to={routes.signup()}>{t('login.signupLink')}</Anchor>
             </Text>
           </Stack>
         </form>

@@ -1,8 +1,10 @@
 import { Button, Group, Text } from '@mantine/core'
 import { useRemoveChannel } from '../../queries.js'
+import { useTranslation } from 'react-i18next'
 
 const RemoveChannelModal = ({ channelId, onClose }) => {
   const removeChannel = useRemoveChannel()
+  const { t } = useTranslation()
 
   const handleSubmit = (event) => {
     event.preventDefault()
@@ -11,17 +13,17 @@ const RemoveChannelModal = ({ channelId, onClose }) => {
 
   return (
     <form onSubmit={handleSubmit}>
-      <Text>Уверены? Канал будет удалён вместе со всеми сообщениями.</Text>
+      <Text>{t('modals.remove.confirm')}</Text>
       {removeChannel.isError && (
         <Text c="red" size="sm" mt="xs">
-          Не удалось удалить канал. Проверьте соединение и попробуйте ещё раз
+          {t('modals.remove.error')}
         </Text>
       )}
       <Group justify="flex-end" mt="md">
-        <Button variant="default" onClick={onClose} disabled={removeChannel.isPending}>Отменить</Button>
+        <Button variant="default" onClick={onClose} disabled={removeChannel.isPending}>{t('modals.cancel')}</Button>
         {/* Фокус на кнопке подтверждения: Enter сразу удаляет канал */}
         <Button type="submit" color="red" loading={removeChannel.isPending} data-autofocus>
-          Удалить
+          {t('modals.remove.submit')}
         </Button>
       </Group>
     </form>

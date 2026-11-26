@@ -21,6 +21,7 @@ import { Link, Navigate, useNavigate } from 'react-router'
 import { signup } from '../api.js'
 import useAuthStore from '../store/authStore.js'
 import routes from '../routes.js'
+import { useTranslation } from 'react-i18next'
 
 // Сначала проверяем обязательность, потом остальные правила — показываем первую ошибку
 const firstError = (...rules) => (value, values, path) => rules
@@ -31,6 +32,7 @@ const SignupPage = () => {
   const token = useAuthStore(state => state.token)
   const logIn = useAuthStore(state => state.logIn)
   const navigate = useNavigate()
+  const { t } = useTranslation()
 
   const form = useForm({
     mode: 'uncontrolled',
@@ -41,16 +43,16 @@ const SignupPage = () => {
     },
     validate: {
       username: value => firstError(
-        isNotEmpty('Обязательное поле'),
-        hasLength({ min: 3, max: 20 }, 'От 3 до 20 символов'),
+        isNotEmpty(t('validation.required')),
+        hasLength({ min: 3, max: 20 }, t('validation.usernameLength')),
       )(value.trim()),
       password: firstError(
-        isNotEmpty('Обязательное поле'),
-        hasLength({ min: 6 }, 'Не менее 6 символов'),
+        isNotEmpty(t('validation.required')),
+        hasLength({ min: 6 }, t('validation.passwordLength')),
       ),
       confirmPassword: firstError(
-        isNotEmpty('Обязательное поле'),
-        matchesField('password', 'Пароли должны совпадать'),
+        isNotEmpty(t('validation.required')),
+        matchesField('password', t('validation.passwordsMustMatch')),
       ),
     },
     // Пока пользователь исправляет пароль, сверяем подтверждение заново
@@ -67,7 +69,7 @@ const SignupPage = () => {
     },
     onError: (error) => {
       if (error.status === 409) {
-        form.setFieldError('username', 'Такой пользователь уже существует')
+        form.setFieldError('username', t('signup.errors.userExists'))
       }
     },
   })
@@ -83,14 +85,14 @@ const SignupPage = () => {
       <Paper withBorder shadow="sm" p="xl" radius="md">
         <form onSubmit={form.onSubmit(values => signupMutation.mutate(values))} noValidate>
           <Stack>
-            <Title order={1} ta="center">Регистрация</Title>
+            <Title order={1} ta="center">{t('signup.title')}</Title>
             {networkError && (
               <Alert color="red" variant="light">
-                Не удалось зарегистрироваться. Проверьте соединение и попробуйте ещё раз.
+                {t('signup.errors.network')}
               </Alert>
             )}
             <TextInput
-              label="Имя пользователя"
+              label={t('signup.username')}
               autoComplete="username"
               withAsterisk
               autoFocus
@@ -99,7 +101,7 @@ const SignupPage = () => {
               {...form.getInputProps('username')}
             />
             <PasswordInput
-              label="Пароль"
+              label={t('signup.password')}
               autoComplete="new-password"
               withAsterisk
               readOnly={signupMutation.isPending}
@@ -107,7 +109,7 @@ const SignupPage = () => {
               {...form.getInputProps('password')}
             />
             <PasswordInput
-              label="Подтвердите пароль"
+              label={t('signup.confirmPassword')}
               autoComplete="new-password"
               withAsterisk
               readOnly={signupMutation.isPending}
@@ -115,12 +117,12 @@ const SignupPage = () => {
               {...form.getInputProps('confirmPassword')}
             />
             <Button type="submit" fullWidth loading={signupMutation.isPending}>
-              Зарегистрироваться
+              {t('signup.submit')}
             </Button>
             <Text size="sm" ta="center">
-              Уже есть аккаунт?
+              {t('signup.haveAccount')}
               {' '}
-              <Anchor component={Link} to={routes.login()}>Войти</Anchor>
+              <Anchor component={Link} to={routes.login()}>{t('signup.loginLink')}</Anchor>
             </Text>
           </Stack>
         </form>

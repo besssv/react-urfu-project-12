@@ -1,8 +1,6 @@
 import { Button, Group, TextInput } from '@mantine/core'
 import { hasLength, isNotEmpty, useForm } from '@mantine/form'
-
-const required = isNotEmpty('Обязательное поле')
-const length = hasLength({ min: 3, max: 20 }, 'От 3 до 20 символов')
+import { useTranslation } from 'react-i18next'
 
 // Форма имени канала — общая для создания и переименования
 const ChannelNameForm = ({
@@ -13,6 +11,10 @@ const ChannelNameForm = ({
   pending,
   submitError,
 }) => {
+  const { t } = useTranslation()
+  const required = isNotEmpty(t('validation.required'))
+  const length = hasLength({ min: 3, max: 20 }, t('validation.channelNameLength'))
+
   const form = useForm({
     mode: 'uncontrolled',
     initialValues: { name: initialName },
@@ -21,7 +23,7 @@ const ChannelNameForm = ({
         const name = value.trim()
         return required(name)
           ?? length(name)
-          ?? (takenNames.includes(name) ? 'Должно быть уникальным' : null)
+          ?? (takenNames.includes(name) ? t('validation.mustBeUnique') : null)
       },
     },
     transformValues: ({ name }) => ({ name: name.trim() }),
@@ -42,7 +44,7 @@ const ChannelNameForm = ({
     // Обычная форма: Enter в поле ввода отправляет её так же, как кнопка
     <form onSubmit={form.onSubmit(({ name }) => onSubmit(name))} noValidate>
       <TextInput
-        label="Имя канала"
+        label={t('modals.channelName')}
         data-autofocus
         readOnly={pending}
         autoComplete="off"
@@ -52,8 +54,8 @@ const ChannelNameForm = ({
         error={form.errors.name ?? submitError}
       />
       <Group justify="flex-end" mt="md">
-        <Button variant="default" onClick={onCancel} disabled={pending}>Отменить</Button>
-        <Button type="submit" loading={pending}>Отправить</Button>
+        <Button variant="default" onClick={onCancel} disabled={pending}>{t('modals.cancel')}</Button>
+        <Button type="submit" loading={pending}>{t('modals.submit')}</Button>
       </Group>
     </form>
   )
