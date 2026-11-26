@@ -43,7 +43,8 @@ const ChannelsList = ({ channels, currentChannelId }) => {
     <Stack gap="xs" h="100%">
       <Group justify="space-between" wrap="nowrap" px="sm">
         <Text fw={700}>{t('channels.title')}</Text>
-        <ActionIcon variant="light" aria-label={t('channels.add')} onClick={() => openModal('addChannel')}>
+        {/* Доступное имя кнопки — её текст «+»; подсказка при наведении — в title */}
+        <ActionIcon variant="light" title={t('channels.add')} onClick={() => openModal('addChannel')}>
           +
         </ActionIcon>
       </Group>

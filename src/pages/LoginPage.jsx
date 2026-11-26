@@ -22,11 +22,12 @@ import { login } from '../api.js'
 import useAuthStore from '../store/authStore.js'
 import routes from '../routes.js'
 import { useTranslation } from 'react-i18next'
-import { toastNetworkError } from '../toasts.js'
+import { useToasts } from '../toasts.js'
 
 const LoginPage = () => {
   const token = useAuthStore(state => state.token)
   const logIn = useAuthStore(state => state.logIn)
+  const toasts = useToasts()
   const navigate = useNavigate()
   const { t } = useTranslation()
   const location = useLocation()
@@ -61,7 +62,7 @@ const LoginPage = () => {
       }
       else {
         setNetworkError(true)
-        toastNetworkError(t('toasts.networkError'))
+        toasts.networkError(t('toasts.networkError'))
       }
       setSubmitting(false)
     }

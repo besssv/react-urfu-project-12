@@ -1,17 +1,18 @@
 import { Button, Group, Text } from '@mantine/core'
 import { useRemoveChannel } from '../../queries.js'
 import { useTranslation } from 'react-i18next'
-import { toastSuccess } from '../../toasts.js'
+import { useToasts } from '../../toasts.js'
 
 const RemoveChannelModal = ({ channelId, onClose }) => {
   const removeChannel = useRemoveChannel()
   const { t } = useTranslation()
+  const toasts = useToasts()
 
   const handleSubmit = (event) => {
     event.preventDefault()
     removeChannel.mutate(channelId, {
       onSuccess: () => {
-        toastSuccess(t('toasts.channelRemoved'))
+        toasts.success(t('toasts.channelRemoved'))
         onClose()
       },
     })

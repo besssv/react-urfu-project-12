@@ -8,7 +8,7 @@ import {
   renameChannel,
 } from './api.js'
 import useAuthStore from './store/authStore.js'
-import useUiStore from './store/uiStore.js'
+import { useAppContext } from './AppContext.js'
 import censor from './profanity.js'
 
 export const queryKeys = {
@@ -35,11 +35,11 @@ export const renameChannelInCache = (queryClient, channel) => {
   queryClient.setQueryData(queryKeys.channels, items => items?.map(c => (c.id === channel.id ? channel : c)))
 }
 
-export const removeChannelFromCache = (queryClient, { id }) => {
+export const removeChannelFromCache = (queryClient, uiStore, { id }) => {
   queryClient.setQueryData(queryKeys.channels, items => items?.filter(c => c.id !== id))
   queryClient.setQueryData(queryKeys.messages, items => items?.filter(m => m.channelId !== id))
   // Все, кто находился в удалённом канале, переезжают в канал по умолчанию
-  useUiStore.getState().leaveChannel(id)
+  uiStore.getState().leaveChannel(id)
 }
 
 export const useChannels = () => {
@@ -75,6 +75,7 @@ export const useSendMessage = () => {
 
 export const useAddChannel = () => {
   const token = useAuthStore(state => state.token)
+  const { uiStore } = useAppContext()
   const queryClient = useQueryClient()
   return useMutation({
     ...mutationDefaults,
@@ -82,7 +83,7 @@ export const useAddChannel = () => {
     onSuccess: (channel) => {
       addChannelToCache(queryClient, channel)
       // Создатель канала сразу попадает в него
-      useUiStore.getState().setCurrentChannel(channel.id)
+      uiStore.getState().setCurrentChannel(channel.id)
     },
   })
 }
@@ -99,10 +100,11 @@ export const useRenameChannel = () => {
 
 export const useRemoveChannel = () => {
   const token = useAuthStore(state => state.token)
+  const { uiStore } = useAppContext()
   const queryClient = useQueryClient()
   return useMutation({
     ...mutationDefaults,
     mutationFn: id => removeChannel(token, id),
-    onSuccess: data => removeChannelFromCache(queryClient, data),
+    onSuccess: data => removeChannelFromCache(queryClient, uiStore, data),
   })
 }

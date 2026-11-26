@@ -1,8 +1,10 @@
-import { create } from 'zustand'
+import { createStore, useStore } from 'zustand'
+import { useAppContext } from '../AppContext.js'
 
 export const DEFAULT_CHANNEL_ID = '1'
 
-const useUiStore = create(set => ({
+// Фабрика: новое хранилище состояния интерфейса на каждый запуск приложения
+export const createUiStore = () => createStore(set => ({
   currentChannelId: DEFAULT_CHANNEL_ID,
   // { type: 'addChannel' | 'renameChannel' | 'removeChannel', channelId } | null
   modal: null,
@@ -14,5 +16,7 @@ const useUiStore = create(set => ({
   openModal: (type, channelId = null) => set({ modal: { type, channelId } }),
   closeModal: () => set({ modal: null }),
 }))
+
+const useUiStore = selector => useStore(useAppContext().uiStore, selector)
 
 export default useUiStore

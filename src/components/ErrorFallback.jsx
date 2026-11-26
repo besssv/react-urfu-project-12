@@ -1,4 +1,5 @@
 import {
+  Anchor,
   Button,
   Center,
   Stack,
@@ -17,6 +18,8 @@ const ErrorFallback = () => {
         <Title order={2}>{t('errorBoundary.title')}</Title>
         <Text c="dimmed" ta="center">{t('errorBoundary.text')}</Text>
         <Button onClick={() => window.location.reload()}>{t('errorBoundary.reload')}</Button>
+        {/* Роутер мог упасть вместе с приложением, поэтому обычная ссылка, а не Link */}
+        <Anchor href="/">{t('appName')}</Anchor>
       </Stack>
     </Center>
   )
