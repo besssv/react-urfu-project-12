@@ -10,7 +10,6 @@ import {
   Text,
 } from '@mantine/core'
 import useUiStore from '../store/uiStore.js'
-import useConnectionStore from '../store/connectionStore.js'
 import { useChannels, useMessages } from '../queries.js'
 import ChannelsList from '../components/ChannelsList.jsx'
 import Messages from '../components/Messages.jsx'
@@ -72,21 +71,12 @@ const Chat = () => {
   )
 }
 
-const ChatPage = () => {
-  const connected = useConnectionStore(state => state.connected)
-  const { t } = useTranslation()
-
-  return (
-    <Flex direction="column" flex={1} mih={0} p="md" gap="md">
-      {!connected && (
-        <Alert color="yellow" variant="light" role="status">
-          {t('chat.disconnected')}
-        </Alert>
-      )}
-      <Chat />
-      <ChannelModals />
-    </Flex>
-  )
-}
+// О потере соединения сообщает всплывающее уведомление (см. socket.js)
+const ChatPage = () => (
+  <Flex direction="column" flex={1} mih={0} p="md" gap="md">
+    <Chat />
+    <ChannelModals />
+  </Flex>
+)
 
 export default ChatPage

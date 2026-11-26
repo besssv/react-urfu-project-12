@@ -22,6 +22,7 @@ import { login } from '../api.js'
 import useAuthStore from '../store/authStore.js'
 import routes from '../routes.js'
 import { useTranslation } from 'react-i18next'
+import { toastNetworkError } from '../toasts.js'
 
 const LoginPage = () => {
   const token = useAuthStore(state => state.token)
@@ -60,6 +61,7 @@ const LoginPage = () => {
       }
       else {
         setNetworkError(true)
+        toastNetworkError(t('toasts.networkError'))
       }
       setSubmitting(false)
     }

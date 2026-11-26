@@ -5,11 +5,10 @@ import {
   removeChannelFromCache,
   renameChannelInCache,
 } from './queries.js'
-import useConnectionStore from './store/connectionStore.js'
+import { toastDisconnected, toastReconnected } from './toasts.js'
 
-const subscribeToSocket = (socket, queryClient) => {
-  const { setConnected } = useConnectionStore.getState()
-  let wasDisconnected = false
+const subscribeToSocket = (socket, queryClient, i18n) => {
+  let disconnected = false
 
   socket.on('newMessage', message => addMessageToCache(queryClient, message))
   socket.on('newChannel', channel => addChannelToCache(queryClient, channel))
@@ -17,18 +16,19 @@ const subscribeToSocket = (socket, queryClient) => {
   socket.on('removeChannel', data => removeChannelFromCache(queryClient, data))
 
   socket.on('connect', () => {
-    setConnected(true)
+    if (!disconnected) return
+    disconnected = false
+    toastReconnected(i18n.t('toasts.reconnected'))
     // Пока соединения не было, изменения могли пройти мимо нас — перезапрашиваем данные
-    if (wasDisconnected) {
-      queryClient.invalidateQueries({ queryKey: queryKeys.messages })
-      queryClient.invalidateQueries({ queryKey: queryKeys.channels })
-    }
-    wasDisconnected = false
+    queryClient.invalidateQueries({ queryKey: queryKeys.messages })
+    queryClient.invalidateQueries({ queryKey: queryKeys.channels })
   })
 
   const handleConnectionLoss = () => {
-    wasDisconnected = true
-    setConnected(false)
+    // Попытки переподключения повторяются — показываем уведомление один раз
+    if (disconnected) return
+    disconnected = true
+    toastDisconnected(i18n.t('toasts.disconnected'))
   }
 
   socket.on('disconnect', handleConnectionLoss)

@@ -1,6 +1,7 @@
 import { useChannels, useRenameChannel } from '../../queries.js'
 import ChannelNameForm from './ChannelNameForm.jsx'
 import { useTranslation } from 'react-i18next'
+import { toastSuccess } from '../../toasts.js'
 
 const RenameChannelModal = ({ channelId, onClose }) => {
   const { data: channels = [] } = useChannels()
@@ -16,7 +17,12 @@ const RenameChannelModal = ({ channelId, onClose }) => {
       pending={renameChannel.isPending}
       submitError={renameChannel.isError ? t('modals.rename.error') : null}
       onCancel={onClose}
-      onSubmit={name => renameChannel.mutate({ id: channelId, name }, { onSuccess: onClose })}
+      onSubmit={name => renameChannel.mutate({ id: channelId, name }, {
+        onSuccess: () => {
+          toastSuccess(t('toasts.channelRenamed'))
+          onClose()
+        },
+      })}
     />
   )
 }

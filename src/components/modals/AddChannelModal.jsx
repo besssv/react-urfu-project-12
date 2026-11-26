@@ -1,6 +1,7 @@
 import { useAddChannel, useChannels } from '../../queries.js'
 import ChannelNameForm from './ChannelNameForm.jsx'
 import { useTranslation } from 'react-i18next'
+import { toastSuccess } from '../../toasts.js'
 
 const AddChannelModal = ({ onClose }) => {
   const { data: channels = [] } = useChannels()
@@ -13,7 +14,12 @@ const AddChannelModal = ({ onClose }) => {
       pending={addChannel.isPending}
       submitError={addChannel.isError ? t('modals.add.error') : null}
       onCancel={onClose}
-      onSubmit={name => addChannel.mutate(name, { onSuccess: onClose })}
+      onSubmit={name => addChannel.mutate(name, {
+        onSuccess: () => {
+          toastSuccess(t('toasts.channelCreated'))
+          onClose()
+        },
+      })}
     />
   )
 }
